@@ -57,6 +57,7 @@ CORS(app,
 init_auth(app)
 
 
+@app.route('/', methods=['POST'])
 @app.route('/.netlify/functions/auth_logout', methods=['POST'])
 @app.route('/api/auth/logout', methods=['POST'])
 def logout():

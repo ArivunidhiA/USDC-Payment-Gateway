@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../api'))
 from flask import Flask, request, redirect, session, jsonify
 from flask_cors import CORS
 from flask_session import Session
-from utils.auth import init_auth, google
+from utils.auth import init_auth
 from utils.db import get_user_by_email, create_user, log_audit
 import serverless_wsgi
 
@@ -55,8 +55,11 @@ CORS(app,
 
 # Initialize auth (must be after Session and CORS)
 init_auth(app)
+# Import google after init_auth
+from utils.auth import google
 
 
+@app.route('/', methods=['GET'])
 @app.route('/.netlify/functions/auth_callback', methods=['GET'])
 @app.route('/api/auth/callback', methods=['GET'])
 def auth_callback():

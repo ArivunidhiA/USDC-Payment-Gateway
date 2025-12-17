@@ -56,6 +56,7 @@ CORS(app,
 init_auth(app)
 
 
+@app.route('/', methods=['GET'])
 @app.route('/.netlify/functions/auth_user', methods=['GET'])
 @app.route('/api/auth/user', methods=['GET'])
 @app.route('/api/auth/me', methods=['GET'])

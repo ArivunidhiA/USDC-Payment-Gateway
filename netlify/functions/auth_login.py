@@ -54,8 +54,11 @@ CORS(app,
 
 # Initialize auth (must be after Session and CORS)
 init_auth(app)
+# Import google after init_auth
+from utils.auth import google
 
 
+@app.route('/', methods=['GET'])
 @app.route('/.netlify/functions/auth_login', methods=['GET'])
 @app.route('/api/auth/login', methods=['GET'])
 def login():
