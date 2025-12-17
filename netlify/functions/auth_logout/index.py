@@ -10,7 +10,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Add parent directory to path to import utils
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../api'))
+# From netlify/functions/auth_logout/index.py, go up 3 levels to reach api/
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../../api'))
 
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
