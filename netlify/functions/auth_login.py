@@ -79,6 +79,8 @@ def login():
     
     # OAuth redirect URI must match exactly what's in Google Cloud Console
     callback_url = request.url_root.rstrip('/') + '/api/auth/callback'
+    # Import google here after init_auth
+    from utils.auth import google
     return google.authorize_redirect(callback_url)
 
 
