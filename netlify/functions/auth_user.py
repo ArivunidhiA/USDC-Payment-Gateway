@@ -39,16 +39,21 @@ app.config['SESSION_COOKIE_DOMAIN'] = None
 # Initialize session
 Session(app)
 
-# Initialize auth (must be after Session)
-init_auth(app)
-
 # CORS configuration for production
 FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+IS_PRODUCTION = os.getenv('ENV') == 'production' or os.getenv('NETLIFY') == 'true'
+allowed_origins = [FRONTEND_URL]
+if not IS_PRODUCTION:
+    allowed_origins.extend(['http://localhost:5173', 'http://127.0.0.1:5173'])
+
 CORS(app, 
      supports_credentials=True,
-     origins=[FRONTEND_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+     origins=allowed_origins,
      allow_headers=['Content-Type', 'Authorization'],
      expose_headers=['Content-Type'])
+
+# Initialize auth (must be after Session and CORS)
+init_auth(app)
 
 
 @app.route('/.netlify/functions/auth_user', methods=['GET'])
