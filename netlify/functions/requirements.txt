@@ -4,5 +4,10 @@ eth-account==0.10.0
 requests==2.31.0
 python-dotenv==1.0.0
 flask-cors==4.0.0
-serverless-wsgi==0.8.2
+serverless-wsgi==3.1.0
+authlib==1.2.1
+flask-session==0.5.0
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.23
+flask-limiter==3.5.0
 
