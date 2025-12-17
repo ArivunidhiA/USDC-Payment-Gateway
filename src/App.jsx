@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import PaymentForm from './components/PaymentForm';
 import TransactionTracker from './components/TransactionTracker';
-import Login from './components/Login';
 import LiveDemo from './components/LiveDemo';
 import { WaveBackground } from './components/ui/WaveBackground';
-import { fetchRecentPayments, getCurrentUser, logout } from './utils/api';
+import { fetchRecentPayments } from './utils/api';
 
 function AppContent() {
   const [activeTab, setActiveTab] = useState('create'); // 'create' or 'track'
   const [recentPayments, setRecentPayments] = useState([]);
   const [stats, setStats] = useState({ total: 0, volume: 0, success: 0 });
-  const location = useLocation();
   const navigate = useNavigate();
 
   // Load recent payments on mount
