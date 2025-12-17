@@ -151,7 +151,7 @@ function LiveDemo() {
               className="flex items-center space-x-2 text-white/80 hover:text-white transition"
             >
               <span>←</span>
-              <span>Go to App</span>
+              <span>Go to Payment Gateway</span>
             </motion.button>
             <motion.div
               className="flex items-center space-x-4"

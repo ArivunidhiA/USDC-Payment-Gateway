@@ -12,54 +12,13 @@ function AppContent() {
   const [activeTab, setActiveTab] = useState('create'); // 'create' or 'track'
   const [recentPayments, setRecentPayments] = useState([]);
   const [stats, setStats] = useState({ total: 0, volume: 0, success: 0 });
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Check authentication on mount
+  // Load recent payments on mount
   useEffect(() => {
-    checkAuth();
+    loadRecentPayments();
   }, []);
-
-  // Load recent payments when authenticated
-  useEffect(() => {
-    if (user) {
-      loadRecentPayments();
-    } else {
-      setRecentPayments([]);
-      setStats({ total: 0, volume: 0, success: 0 });
-    }
-  }, [user]);
-
-  const checkAuth = async () => {
-    try {
-      const currentUser = await getCurrentUser();
-      if (currentUser && currentUser.user_id) {
-        setUser(currentUser);
-      } else {
-        setUser(null);
-        setLoading(false); // Ensure loading is false when no user
-      }
-    } catch (error) {
-      console.log('Auth check failed:', error);
-      setUser(null);
-      setLoading(false); // Ensure loading is false on error
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-      setUser(null);
-      setRecentPayments([]);
-      setStats({ total: 0, volume: 0, success: 0 });
-    } catch (error) {
-      console.error('Logout failed:', error);
-    }
-  };
 
   const loadRecentPayments = async () => {
     try {
@@ -76,34 +35,6 @@ function AppContent() {
       console.error('Failed to load payments:', error);
     }
   };
-
-  // Show login if not authenticated
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white relative flex items-center justify-center">
-        <WaveBackground 
-          strokeColor="#ffffff"
-          backgroundColor="#000000"
-          opacity={0.5}
-          className="fixed inset-0"
-        />
-        <div className="relative z-10">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-12 h-12 border-4 border-white border-t-transparent rounded-full"
-          />
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <Login onLogin={() => {
-      console.log('[APP] Login callback triggered, checking auth...');
-      checkAuth();
-    }} />;
-  }
 
   return (
     <div className="min-h-screen bg-black text-white relative">
@@ -145,7 +76,7 @@ function AppContent() {
             <div className="flex items-center space-x-4">
               <div className="flex space-x-2">
                 <motion.button
-                  onClick={() => navigate('/demo')}
+                  onClick={() => navigate('/')}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="px-4 py-2 rounded-lg font-medium transition bg-white text-black hover:bg-white/90 shadow-lg border border-white/20"
@@ -175,46 +106,6 @@ function AppContent() {
                   }`}
                 >
                   Track Payments
-                </motion.button>
-              </div>
-              
-              {/* User Menu */}
-              <div className="flex items-center space-x-3 ml-auto">
-                {/* User Avatar/Icon - Always show an icon */}
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  className="relative"
-                >
-                  {user.picture && user.picture.trim() !== '' ? (
-                    <img
-                      src={user.picture}
-                      alt={user.name || 'User'}
-                      className="w-10 h-10 rounded-full border-2 border-white object-cover"
-                      onError={(e) => {
-                        // If image fails to load, hide image and show fallback
-                        e.target.style.display = 'none';
-                        const fallback = e.target.parentElement.querySelector('.avatar-fallback');
-                        if (fallback) fallback.style.display = 'flex';
-                      }}
-                    />
-                  ) : null}
-                  <div 
-                    className={`avatar-fallback w-10 h-10 rounded-full bg-white flex items-center justify-center text-black font-bold text-lg border-2 border-white shadow-md ${user.picture && user.picture.trim() !== '' ? 'hidden' : ''}`}
-                  >
-                    {user.name ? user.name.charAt(0).toUpperCase() : user.email ? user.email.charAt(0).toUpperCase() : '👤'}
-                  </div>
-                </motion.div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-white">{user.name || 'User'}</p>
-                  <p className="text-xs text-white/70">{user.email || ''}</p>
-                </div>
-                <motion.button
-                  onClick={handleLogout}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="px-3 py-1 text-sm text-white/80 hover:text-white border border-white/30 hover:border-white/50 rounded-lg transition"
-                >
-                  Logout
                 </motion.button>
               </div>
             </div>
@@ -317,69 +208,13 @@ function AppContent() {
   );
 }
 
-// Protected route wrapper for authenticated routes
-function ProtectedRoute({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    checkAuth();
-  }, []);
-
-  const checkAuth = async () => {
-    try {
-      const currentUser = await getCurrentUser();
-      if (currentUser && currentUser.user_id) {
-        setUser(currentUser);
-      } else {
-        setUser(null);
-        // Redirect to login if not authenticated
-        navigate('/');
-      }
-    } catch (error) {
-      console.log('Auth check failed:', error);
-      setUser(null);
-      navigate('/');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-black text-white relative flex items-center justify-center">
-        <WaveBackground 
-          strokeColor="#ffffff"
-          backgroundColor="#000000"
-          opacity={0.5}
-          className="fixed inset-0"
-        />
-        <div className="relative z-10">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-12 h-12 border-4 border-white border-t-transparent rounded-full"
-          />
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return null; // Will redirect to login
-  }
-
-  return children;
-}
-
 // Main App component with router wrapper
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Login onLogin={() => window.location.reload()} />} />
-      <Route path="/app" element={<ProtectedRoute><AppContent /></ProtectedRoute>} />
-      <Route path="/demo" element={<ProtectedRoute><LiveDemo /></ProtectedRoute>} />
+      <Route path="/" element={<LiveDemo />} />
+      <Route path="/demo" element={<LiveDemo />} />
+      <Route path="/app" element={<AppContent />} />
     </Routes>
   );
 }
