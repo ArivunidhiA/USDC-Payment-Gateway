@@ -37,9 +37,36 @@
   status = 200
   force = true
 
-# Note: Auth endpoints (/api/auth/*) and /api/health would need 
-# additional Netlify functions to be created, or can be handled
-# via a unified serverless function approach
+# Auth endpoints
+[[redirects]]
+  from = "/api/auth/login"
+  to = "/.netlify/functions/auth_login"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/auth/callback"
+  to = "/.netlify/functions/auth_callback"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/auth/user"
+  to = "/.netlify/functions/auth_user"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/auth/me"
+  to = "/.netlify/functions/auth_user"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/auth/logout"
+  to = "/.netlify/functions/auth_logout"
+  status = 200
+  force = true
 
 # SPA fallback - serve index.html for all routes (must be last)
 [[redirects]]

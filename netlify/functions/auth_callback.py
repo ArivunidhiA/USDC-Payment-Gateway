@@ -1,0 +1,120 @@
+"""
+Netlify serverless function for OAuth callback handling.
+"""
+
+import sys
+import os
+
+# Add parent directory to path to import utils
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../api'))
+
+from flask import Flask, request, redirect, session, jsonify
+from flask_cors import CORS
+from utils.auth import init_auth, google
+from utils.db import get_user_by_email, create_user, log_audit
+import serverless_wsgi
+
+app = Flask(__name__)
+
+# Initialize auth
+init_auth(app)
+
+# CORS configuration for production
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+CORS(app, 
+     supports_credentials=True,
+     origins=[FRONTEND_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+     allow_headers=['Content-Type', 'Authorization'],
+     expose_headers=['Content-Type'])
+
+
+@app.route('/.netlify/functions/auth_callback', methods=['GET'])
+@app.route('/api/auth/callback', methods=['GET'])
+def auth_callback():
+    """Handle OAuth callback."""
+    try:
+        # Get the token - this validates the state automatically
+        token = google.authorize_access_token()
+        
+        if not token:
+            return jsonify({'error': 'Failed to get access token from Google'}), 400
+        
+        # Get user info from Google - use full URL
+        userinfo_url = 'https://www.googleapis.com/oauth2/v2/userinfo'
+        resp = google.get(userinfo_url, token=token)
+        
+        if resp.status_code != 200:
+            return jsonify({'error': f'Failed to get user info: {resp.status_code}'}), 400
+        
+        user_info = resp.json()
+        
+        if not user_info or not user_info.get('email'):
+            return jsonify({'error': 'Email not provided by Google'}), 400
+        
+        email = user_info.get('email')
+        name = user_info.get('name')
+        picture = user_info.get('picture')
+        sub = user_info.get('sub')
+        
+        # Get or create user
+        user = get_user_by_email(email)
+        if not user:
+            user_id = create_user(
+                email=email,
+                name=name,
+                picture=picture,
+                oauth_provider='google',
+                oauth_id=sub
+            )
+        else:
+            user_id = user['user_id']
+        
+        # Set session data - CRITICAL: Must set before redirect
+        session['user_id'] = user_id
+        session['email'] = email
+        session['name'] = name
+        session['picture'] = picture
+        session.permanent = True
+        session.modified = True
+        
+        # Log login
+        log_audit(
+            user_id=user_id,
+            action='login',
+            resource_type='user',
+            resource_id=user_id,
+            ip_address=request.remote_addr,
+            user_agent=request.headers.get('User-Agent')
+        )
+        
+        # Get redirect URI from session (set during login)
+        redirect_uri = session.pop('oauth_redirect_uri', FRONTEND_URL)
+        if redirect_uri.startswith('/'):
+            redirect_uri = FRONTEND_URL + redirect_uri
+        
+        # Create redirect response
+        return redirect(redirect_uri)
+        
+    except Exception as e:
+        import traceback
+        error_msg = str(e)
+        error_trace = traceback.format_exc()
+        
+        # If it's a state mismatch, provide helpful error
+        if 'mismatching_state' in error_msg or 'MismatchingStateError' in error_trace:
+            return jsonify({
+                'error': 'Session expired or cookies not enabled. Please try again.',
+                'details': 'The OAuth state parameter doesn\'t match. This usually means:\n1. Cookies are disabled\n2. Session storage failed\n3. You\'re using a different browser/session\n\nPlease clear cookies and try again, or use the same browser window.',
+                'traceback': error_trace
+            }), 400
+        
+        return jsonify({
+            'error': error_msg,
+            'traceback': error_trace
+        }), 500
+
+
+# Netlify serverless function handler
+def handler(event, context):
+    return serverless_wsgi.handle_request(app, event, context)
+
