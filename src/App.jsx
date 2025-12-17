@@ -317,13 +317,69 @@ function AppContent() {
   );
 }
 
+// Protected route wrapper for authenticated routes
+function ProtectedRoute({ children }) {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const currentUser = await getCurrentUser();
+      if (currentUser && currentUser.user_id) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+        // Redirect to login if not authenticated
+        navigate('/');
+      }
+    } catch (error) {
+      console.log('Auth check failed:', error);
+      setUser(null);
+      navigate('/');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white relative flex items-center justify-center">
+        <WaveBackground 
+          strokeColor="#ffffff"
+          backgroundColor="#000000"
+          opacity={0.5}
+          className="fixed inset-0"
+        />
+        <div className="relative z-10">
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            className="w-12 h-12 border-4 border-white border-t-transparent rounded-full"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to login
+  }
+
+  return children;
+}
+
 // Main App component with router wrapper
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<LiveDemo />} />
-      <Route path="/app" element={<AppContent />} />
-      <Route path="/demo" element={<LiveDemo />} />
+      <Route path="/" element={<Login onLogin={() => window.location.reload()} />} />
+      <Route path="/app" element={<ProtectedRoute><AppContent /></ProtectedRoute>} />
+      <Route path="/demo" element={<ProtectedRoute><LiveDemo /></ProtectedRoute>} />
     </Routes>
   );
 }

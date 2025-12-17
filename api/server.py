@@ -77,11 +77,12 @@ Session(app)
 oauth = init_auth(app)
 from utils.auth import google
 
-# Rate limiting
+# Rate limiting - configured for 100+ transactions/hour capacity
+# Default: 200 per day, 150 per hour (allows for bursts above 100/hr)
 limiter = Limiter(
     app=app,
     key_func=get_remote_address,
-    default_limits=["200 per day", "50 per hour"],
+    default_limits=["200 per day", "150 per hour"],
     storage_uri="memory://"
 )
 
@@ -272,7 +273,7 @@ def get_me():
 
 # Protected Payment Routes
 @app.route('/api/create_payment', methods=['POST'])
-@limiter.limit("10 per minute")
+@limiter.limit("30 per minute")  # Increased for 100+ tx/hour capacity
 @login_required
 def create_payment_handler():
     """Creates a new payment request (requires authentication)."""
@@ -350,7 +351,7 @@ def process_transfer_async(payment_id, burn_tx_hash, source_chain, dest_chain, u
 
 
 @app.route('/api/initiate_transfer', methods=['POST'])
-@limiter.limit("20 per minute")
+@limiter.limit("60 per minute")  # Increased for 100+ tx/hour capacity
 @login_required
 def initiate_transfer():
     """Handles the actual USDC burn and attestation fetching."""

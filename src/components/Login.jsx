@@ -4,8 +4,8 @@ import { WaveBackground } from './ui/WaveBackground';
 
 function Login({ onLogin }) {
   const handleGoogleLogin = () => {
-    // Redirect to backend OAuth endpoint with full frontend URL
-    const redirectUri = window.location.origin + window.location.pathname;
+    // Redirect to backend OAuth endpoint, after login go to demo page
+    const redirectUri = window.location.origin + '/demo';
     console.log('[LOGIN] Redirecting to OAuth with redirect_uri:', redirectUri);
     window.location.href = '/api/auth/login?redirect_uri=' + encodeURIComponent(redirectUri);
   };
