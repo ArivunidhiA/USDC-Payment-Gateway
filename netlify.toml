@@ -5,10 +5,12 @@
 [build.environment]
   PYTHON_VERSION = "3.11"
   NODE_VERSION = "18"
+  SECRETS_SCAN_OMIT_KEYS = "ENV"
 
 [functions]
   directory = "netlify/functions"
   node_bundler = "esbuild"
+  included_files = ["api/**"]
 
 # Redirect API routes to Netlify functions
 [[redirects]]
