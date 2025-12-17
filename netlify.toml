@@ -6,7 +6,6 @@
   PYTHON_VERSION = "3.11"
   NODE_VERSION = "18"
   SECRETS_SCAN_OMIT_KEYS = "ENV,FRONTEND_URL"
-  SECRETS_SCAN_OMIT_PATHS = "GOOGLE_OAUTH_FIX.md,GOOGLE_OAUTH_URGENT_FIX.md"
 
 [functions]
   directory = "netlify/functions"

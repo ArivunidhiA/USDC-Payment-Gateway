@@ -32,6 +32,9 @@ build/
 *.egg-info/
 .netlify/
 
+# Netlify secrets
+netlify.env
+
 # IDE
 .vscode/
 .idea/
