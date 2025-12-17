@@ -11,12 +11,20 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../api'))
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import uuid
+import os
 from utils.db import create_payment
 from utils.chain_config import get_all_chains
 import serverless_wsgi
 
 app = Flask(__name__)
-CORS(app)
+
+# CORS configuration for production
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
+CORS(app, 
+     supports_credentials=True,
+     origins=[FRONTEND_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'],
+     allow_headers=['Content-Type', 'Authorization'],
+     expose_headers=['Content-Type'])
 
 
 @app.route('/.netlify/functions/create_payment', methods=['POST'])

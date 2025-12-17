@@ -25,23 +25,48 @@ from utils.auth import init_auth, login_required, get_current_user, handle_googl
 load_dotenv()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'dev-secret-key-change-in-production')
+
+# SECURITY: Require SECRET_KEY in production
+FLASK_SECRET_KEY = os.getenv('FLASK_SECRET_KEY')
+if not FLASK_SECRET_KEY:
+    if os.getenv('FLASK_ENV') == 'development' or os.getenv('ENV') == 'development':
+        FLASK_SECRET_KEY = 'dev-secret-key-change-in-production'
+        print("WARNING: Using default secret key. Set FLASK_SECRET_KEY in production!")
+    else:
+        raise ValueError("FLASK_SECRET_KEY environment variable is required in production")
+app.config['SECRET_KEY'] = FLASK_SECRET_KEY
+
+# Determine if we're in production
+IS_PRODUCTION = os.getenv('FLASK_ENV') == 'production' or os.getenv('ENV') == 'production' or os.getenv('NETLIFY') == 'true'
+FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
 
 # Session configuration - critical for OAuth state management
-app.config['SESSION_TYPE'] = 'filesystem'
+# Use 'null' session type for serverless (stateless), 'filesystem' for local dev
+if IS_PRODUCTION:
+    # In serverless/Netlify, we need to use signed cookies or external session store
+    # For now, use filesystem with proper path, but consider Redis/Memcached for production
+    app.config['SESSION_TYPE'] = 'filesystem'
+else:
+    app.config['SESSION_TYPE'] = 'filesystem'
+
 app.config['SESSION_PERMANENT'] = True
 app.config['SESSION_COOKIE_NAME'] = 'usdc_gateway_session'
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
-app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
+app.config['SESSION_COOKIE_SECURE'] = IS_PRODUCTION  # True in production (HTTPS required)
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_PATH'] = '/'
-# Don't set domain - let it default to None so it works for localhost on any port
-app.config['SESSION_COOKIE_DOMAIN'] = None
+app.config['SESSION_COOKIE_DOMAIN'] = None  # Let Flask handle domain automatically
 
 # CORS - must allow credentials and specific origin
+# In production, use FRONTEND_URL from environment
+allowed_origins = [FRONTEND_URL]
+if not IS_PRODUCTION:
+    # Allow localhost for development
+    allowed_origins.extend(['http://localhost:5173', 'http://127.0.0.1:5173'])
+
 CORS(app, 
      supports_credentials=True, 
-     origins=['http://localhost:5173', 'http://127.0.0.1:5173'],
+     origins=allowed_origins,
      allow_headers=['Content-Type', 'Authorization'],
      expose_headers=['Content-Type'])
 
@@ -77,13 +102,19 @@ def health_check():
 def login():
     """Initiate Google OAuth login."""
     # Store frontend URL in session for after OAuth callback
-    # Default to frontend URL if not provided
-    frontend_url = request.args.get('redirect_uri', 'http://localhost:5173')
-    # If it's just a path, prepend frontend URL
-    if frontend_url.startswith('/'):
-        frontend_url = 'http://localhost:5173' + frontend_url
+    # Use FRONTEND_URL from environment or request origin
+    requested_redirect = request.args.get('redirect_uri')
+    if requested_redirect:
+        if requested_redirect.startswith('/'):
+            frontend_url = FRONTEND_URL + requested_redirect
+        else:
+            frontend_url = requested_redirect
+    else:
+        frontend_url = FRONTEND_URL
+    
     session['oauth_redirect_uri'] = frontend_url
     session.permanent = True
+    session.modified = True
     
     # OAuth redirect URI must match exactly what's in Google Cloud Console
     callback_url = request.url_root.rstrip('/') + '/api/auth/callback'
