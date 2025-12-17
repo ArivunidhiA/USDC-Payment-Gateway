@@ -1,11 +1,11 @@
-/api/create_payment /.netlify/functions/create_payment 200
-/api/initiate_transfer /.netlify/functions/initiate_transfer 200
-/api/check_status/* /.netlify/functions/check_status/:splat 200
-/api/recent_payments /.netlify/functions/recent_payments 200
-/api/auth/login /.netlify/functions/auth_login 200
-/api/auth/callback /.netlify/functions/auth_callback 200
-/api/auth/user /.netlify/functions/auth_user 200
-/api/auth/me /.netlify/functions/auth_user 200
-/api/auth/logout /.netlify/functions/auth_logout 200
+/api/create_payment /.netlify/functions/create_payment 200!
+/api/initiate_transfer /.netlify/functions/initiate_transfer 200!
+/api/check_status/* /.netlify/functions/check_status/:splat 200!
+/api/recent_payments /.netlify/functions/recent_payments 200!
+/api/auth/login /.netlify/functions/auth_login 200!
+/api/auth/callback /.netlify/functions/auth_callback 200!
+/api/auth/user /.netlify/functions/auth_user 200!
+/api/auth/me /.netlify/functions/auth_user 200!
+/api/auth/logout /.netlify/functions/auth_logout 200!
 /* /index.html 200
 
