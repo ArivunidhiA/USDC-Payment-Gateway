@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../api'))
 from flask import Flask, request, redirect, session
 from flask_cors import CORS
 from flask_session import Session
-from utils.auth import init_auth, google
+from utils.auth import init_auth
 import serverless_wsgi
 
 app = Flask(__name__)
