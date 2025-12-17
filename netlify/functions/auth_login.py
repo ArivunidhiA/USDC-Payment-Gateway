@@ -78,9 +78,14 @@ def login():
     session.modified = True
     
     # OAuth redirect URI must match exactly what's in Google Cloud Console
-    callback_url = request.url_root.rstrip('/') + '/api/auth/callback'
-    # Import google here after init_auth
-    from utils.auth import google
+    # In Netlify, request.url_root might not work correctly, use environment variable
+    if IS_PRODUCTION:
+        # Use FRONTEND_URL for production callback
+        base_url = FRONTEND_URL.rstrip('/')
+    else:
+        base_url = request.url_root.rstrip('/')
+    
+    callback_url = base_url + '/api/auth/callback'
     return google.authorize_redirect(callback_url)
 
 

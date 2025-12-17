@@ -122,7 +122,11 @@ def auth_callback():
         # Get redirect URI from session (set during login)
         redirect_uri = session.pop('oauth_redirect_uri', FRONTEND_URL)
         if redirect_uri.startswith('/'):
-            redirect_uri = FRONTEND_URL + redirect_uri
+            # Use FRONTEND_URL in production, request origin in dev
+            if IS_PRODUCTION:
+                redirect_uri = FRONTEND_URL + redirect_uri
+            else:
+                redirect_uri = request.url_root.rstrip('/') + redirect_uri
         
         # Create redirect response
         return redirect(redirect_uri)
