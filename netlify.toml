@@ -38,19 +38,9 @@
   status = 200
   force = true
 
-# Auth endpoints - handled by unified server in production
-# For Netlify, we'll need to create separate function files or use a catch-all
-[[redirects]]
-  from = "/api/auth/*"
-  to = "/.netlify/functions/auth_handler/:splat"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/api/health"
-  to = "/.netlify/functions/health"
-  status = 200
-  force = true
+# Note: Auth endpoints (/api/auth/*) and /api/health would need 
+# additional Netlify functions to be created, or can be handled
+# via a unified serverless function approach
 
 # SPA fallback - serve index.html for all routes (must be last)
 [[redirects]]
