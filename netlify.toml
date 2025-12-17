@@ -70,10 +70,9 @@
   force = true
 
 # SPA fallback - serve index.html for all routes (must be last)
-# Exclude /api/* paths - they're handled by function redirects above
+# Does NOT match /api/* because force=true redirects above take precedence
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  force = false
 
