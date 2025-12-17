@@ -6,16 +6,16 @@ Looking at your Google Cloud Console screenshot, I found **incorrect redirect UR
 
 ### ❌ **WRONG Redirect URIs (Remove these):**
 1. `http://localhost:5173/auth/callback` - Should be `/api/auth/callback`
-2. `https://usdc-payment-gateway.netlify.app/auth/callback` - Should be `/api/auth/callback`
-3. `https://usdc-payment-gateway.netlify.app/.netlify/functions/auth_callt` - Truncated and wrong!
+2. `https://your-site.netlify.app/auth/callback` - Should be `/api/auth/callback`
+3. `https://your-site.netlify.app/.netlify/functions/auth_callt` - Truncated and wrong!
 
 ### ✅ **CORRECT Redirect URIs (Keep these):**
 1. `http://localhost:5001/api/auth/callback` ✓
-2. `https://usdc-payment-gateway.netlify.app/api/auth/callback` ✓
+2. `https://your-site.netlify.app/api/auth/callback` ✓
 
 ### ✅ **CORRECT JavaScript Origins (These are fine):**
 1. `http://localhost:5173` ✓
-2. `https://usdc-payment-gateway.netlify.app` ✓
+2. `https://your-site.netlify.app` ✓
 
 ## Steps to Fix:
 
@@ -24,11 +24,11 @@ Looking at your Google Cloud Console screenshot, I found **incorrect redirect UR
 3. **In "Authorized redirect URIs" section:**
    - **DELETE** these incorrect URIs:
      - `http://localhost:5173/auth/callback`
-     - `https://usdc-payment-gateway.netlify.app/auth/callback`
-     - `https://usdc-payment-gateway.netlify.app/.netlify/functions/auth_callt`
+     - `https://your-site.netlify.app/auth/callback`
+     - `https://your-site.netlify.app/.netlify/functions/auth_callt`
    - **KEEP** these correct URIs:
      - `http://localhost:5001/api/auth/callback`
-     - `https://usdc-payment-gateway.netlify.app/api/auth/callback`
+     - `https://your-site.netlify.app/api/auth/callback`
 4. **Click "SAVE"**
 
 ## Why This Matters:
