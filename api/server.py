@@ -204,9 +204,9 @@ def auth_callback():
         )
         
         # Get redirect URI from session (set during login)
-        redirect_uri = session.pop('oauth_redirect_uri', 'http://localhost:5173')
+        redirect_uri = session.pop('oauth_redirect_uri', FRONTEND_URL)
         if redirect_uri.startswith('/'):
-            redirect_uri = 'http://localhost:5173' + redirect_uri
+            redirect_uri = FRONTEND_URL + redirect_uri
         
         # Debug: Log redirect
         print(f"[AUTH] Redirecting to: {redirect_uri}")
