@@ -177,13 +177,13 @@ function PaymentForm({ onPaymentCreated, demoMode = false }) {
 
   return (
     <motion.div 
-      className="bg-white rounded-lg shadow-lg p-8"
+      className="bg-black/60 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg p-8"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4 }}
     >
       <motion.h2 
-        className="text-2xl font-bold text-gray-900 mb-6"
+        className="text-2xl font-bold text-white mb-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.1 }}
@@ -198,9 +198,9 @@ function PaymentForm({ onPaymentCreated, demoMode = false }) {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg"
+            className="mb-6 p-4 bg-white/10 border border-white/30 rounded-lg"
           >
-            <p className="text-sm text-yellow-800">
+            <p className="text-sm text-white/90">
               🎭 <strong>Demo Mode:</strong> You're viewing sample transactions. 
               Toggle off "Demo Mode" to create real payments with your wallet.
             </p>
@@ -220,7 +220,7 @@ function PaymentForm({ onPaymentCreated, demoMode = false }) {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition mb-6"
+              className="w-full bg-white text-black py-3 rounded-lg font-medium hover:bg-white/90 transition mb-6 border border-white/20"
             >
               Connect Wallet
             </motion.button>
@@ -230,9 +230,9 @@ function PaymentForm({ onPaymentCreated, demoMode = false }) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg"
+              className="mb-6 p-4 bg-white/10 border border-white/30 rounded-lg"
             >
-              <p className="text-sm text-green-800">
+              <p className="text-sm text-white/90">
                 Connected: {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
               </p>
             </motion.div>
@@ -248,7 +248,7 @@ function PaymentForm({ onPaymentCreated, demoMode = false }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-white/80 mb-2">
             Amount (USDC)
           </label>
           <motion.input
@@ -258,7 +258,7 @@ function PaymentForm({ onPaymentCreated, demoMode = false }) {
             value={formData.amount}
             onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
             whileFocus={{ scale: 1.02 }}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-2 bg-black/40 border border-white/30 rounded-lg focus:ring-2 focus:ring-white/50 text-white placeholder-white/50"
             placeholder="10.00"
             required
           />
@@ -280,7 +280,7 @@ function PaymentForm({ onPaymentCreated, demoMode = false }) {
 
         {/* Recipient Address */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-white/80 mb-2">
             Recipient Address
           </label>
           <input
@@ -299,7 +299,7 @@ function PaymentForm({ onPaymentCreated, demoMode = false }) {
           disabled={processing || (!walletConnected && !demoMode)}
           whileHover={!processing && (walletConnected || demoMode) ? { scale: 1.02 } : {}}
           whileTap={!processing && (walletConnected || demoMode) ? { scale: 0.98 } : {}}
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
+          className="w-full bg-white text-black py-3 rounded-lg font-medium hover:bg-white/90 disabled:bg-white/20 disabled:cursor-not-allowed transition border border-white/20"
         >
           {demoMode ? (
             <span className="flex items-center justify-center">
@@ -328,9 +328,9 @@ function PaymentForm({ onPaymentCreated, demoMode = false }) {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="p-4 bg-blue-50 border border-blue-200 rounded-lg"
+              className="p-4 bg-white/10 border border-white/30 rounded-lg"
             >
-              <p className="text-sm text-blue-800">{status}</p>
+              <p className="text-sm text-white/90">{status}</p>
             </motion.div>
           )}
         </AnimatePresence>

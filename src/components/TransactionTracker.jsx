@@ -26,15 +26,15 @@ function TransactionTracker({ payments }) {
   const getStatusColor = (status) => {
     switch (status) {
       case 'completed':
-        return 'bg-green-100 text-green-800';
+        return 'bg-white/20 text-white border border-white/30';
       case 'failed':
-        return 'bg-red-100 text-red-800';
+        return 'bg-white/10 text-white/70 border border-white/20';
       case 'pending':
       case 'burning':
       case 'fetching_attestation':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-white/15 text-white/90 border border-white/25';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-white/10 text-white/60 border border-white/20';
     }
   };
 
@@ -53,12 +53,12 @@ function TransactionTracker({ payments }) {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Payments List */}
       <motion.div 
-        className="bg-white rounded-lg shadow-lg p-6"
+        className="bg-black/60 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg p-6"
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <h2 className="text-xl font-bold text-white mb-4">
           Recent Payments
         </h2>
         
@@ -86,10 +86,10 @@ function TransactionTracker({ payments }) {
                 >
                   💸
                 </motion.div>
-                <p className="text-gray-500 text-lg font-medium mb-2">
+                <p className="text-white/70 text-lg font-medium mb-2">
                   No payments yet
                 </p>
-                <p className="text-gray-400 text-sm">
+                <p className="text-white/50 text-sm">
                   Create your first cross-chain payment to get started!
                 </p>
               </motion.div>
@@ -106,16 +106,16 @@ function TransactionTracker({ payments }) {
                   whileTap={{ scale: 0.98 }}
                   className={`p-4 border rounded-lg cursor-pointer transition ${
                     selectedPayment?.payment_id === payment.payment_id
-                      ? 'border-indigo-500 bg-indigo-50 shadow-md'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-white bg-white/10 shadow-md'
+                      : 'border-white/20 hover:border-white/40'
                   }`}
                 >
                   <div className="flex justify-between items-start">
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-white">
                         ${payment.amount_usd}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-white/70">
                         {payment.source_chain} → {payment.dest_chain}
                       </p>
                     </div>
@@ -128,7 +128,7 @@ function TransactionTracker({ payments }) {
                       {payment.status}
                     </motion.span>
                   </div>
-                  <p className="text-xs text-gray-500 mt-2">
+                  <p className="text-xs text-white/50 mt-2">
                     {new Date(payment.created_at).toLocaleString()}
                   </p>
                 </motion.div>
@@ -140,12 +140,12 @@ function TransactionTracker({ payments }) {
 
       {/* Payment Details */}
       <motion.div 
-        className="bg-white rounded-lg shadow-lg p-6"
+        className="bg-black/60 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg p-6"
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.4 }}
       >
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <h2 className="text-xl font-bold text-white mb-4">
           Payment Details
         </h2>
 
@@ -188,7 +188,7 @@ function TransactionTracker({ payments }) {
               className="space-y-4"
             >
             {/* Status Timeline */}
-            <div className="border-l-4 border-indigo-500 pl-4 space-y-4">
+            <div className="border-l-4 border-white/50 pl-4 space-y-4">
               <motion.div 
                 className="flex items-start space-x-3"
                 initial={{ opacity: 0, x: -10 }}
@@ -196,13 +196,13 @@ function TransactionTracker({ payments }) {
                 transition={{ delay: 0.1 }}
               >
                 <motion.div 
-                  className="flex-shrink-0 w-3 h-3 bg-green-500 rounded-full mt-1"
+                  className="flex-shrink-0 w-3 h-3 bg-white rounded-full mt-1"
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ duration: 2, repeat: Infinity }}
                 ></motion.div>
                 <div>
-                  <p className="font-medium text-gray-900">Payment Created</p>
-                  <p className="text-sm text-gray-600">
+                  <p className="font-medium text-white">Payment Created</p>
+                  <p className="text-sm text-white/70">
                     {new Date(selectedPayment.created_at).toLocaleString()}
                   </p>
                 </div>
@@ -218,17 +218,17 @@ function TransactionTracker({ payments }) {
                     transition={{ delay: 0.2 }}
                   >
                     <motion.div 
-                      className="flex-shrink-0 w-3 h-3 bg-green-500 rounded-full mt-1"
+                      className="flex-shrink-0 w-3 h-3 bg-white rounded-full mt-1"
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
                     ></motion.div>
                     <div>
-                      <p className="font-medium text-gray-900">USDC Burned</p>
+                      <p className="font-medium text-white">USDC Burned</p>
                       <motion.a
                         href={getExplorerUrl(selectedPayment.source_chain, selectedPayment.burn_tx_hash)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-indigo-600 hover:underline"
+                        className="text-sm text-white hover:underline"
                         whileHover={{ scale: 1.05 }}
                       >
                         View Transaction ↗
@@ -256,10 +256,10 @@ function TransactionTracker({ payments }) {
                       transition={{ duration: 1.5, repeat: Infinity }}
                     ></motion.div>
                     <div>
-                      <p className="font-medium text-gray-900">
+                      <p className="font-medium text-white">
                         Fetching Attestation
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-white/70">
                         Waiting for Circle confirmation...
                       </p>
                     </div>
@@ -277,17 +277,17 @@ function TransactionTracker({ payments }) {
                     transition={{ delay: 0.4 }}
                   >
                     <motion.div 
-                      className="flex-shrink-0 w-3 h-3 bg-green-500 rounded-full mt-1"
+                      className="flex-shrink-0 w-3 h-3 bg-white rounded-full mt-1"
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ duration: 2, repeat: Infinity }}
                     ></motion.div>
                     <div>
-                      <p className="font-medium text-gray-900">USDC Minted</p>
+                      <p className="font-medium text-white">USDC Minted</p>
                       <motion.a
                         href={getExplorerUrl(selectedPayment.dest_chain, selectedPayment.mint_tx_hash)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-indigo-600 hover:underline"
+                        className="text-sm text-white hover:underline"
                         whileHover={{ scale: 1.05 }}
                       >
                         View Transaction ↗
@@ -300,12 +300,12 @@ function TransactionTracker({ payments }) {
 
             {/* Payment Info */}
             <div className="border-t pt-4 mt-4">
-              <h3 className="font-medium text-gray-900 mb-3">
+              <h3 className="font-medium text-white mb-3">
                 Payment Information
               </h3>
               <dl className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <dt className="text-gray-600">Amount:</dt>
+                  <dt className="text-white/70">Amount:</dt>
                   <dd className="font-medium">${selectedPayment.amount_usd}</dd>
                 </div>
                 <div className="flex justify-between">
