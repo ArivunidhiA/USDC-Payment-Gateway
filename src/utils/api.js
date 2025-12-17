@@ -66,8 +66,8 @@ export async function checkPaymentStatus(paymentId) {
   return fetchAPI(`/api/check_status/${paymentId}`);
 }
 
-export async function fetchRecentPayments(limit = 50, demoMode = false) {
-  const data = await fetchAPI(`/api/recent_payments?limit=${limit}&demo=${demoMode}`, {
+export async function fetchRecentPayments(limit = 50) {
+  const data = await fetchAPI(`/api/recent_payments?limit=${limit}`, {
     credentials: 'include', // Include cookies for session
   });
   return data.payments;

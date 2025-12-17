@@ -14,7 +14,6 @@ function AppContent() {
   const [stats, setStats] = useState({ total: 0, volume: 0, success: 0 });
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [demoMode, setDemoMode] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -23,15 +22,15 @@ function AppContent() {
     checkAuth();
   }, []);
 
-  // Load recent payments when authenticated or demo mode changes
+  // Load recent payments when authenticated
   useEffect(() => {
-    if (user || demoMode) { // Load payments if user is logged in OR demo mode is active
+    if (user) {
       loadRecentPayments();
     } else {
-      setRecentPayments([]); // Clear payments if neither logged in nor demo mode
+      setRecentPayments([]);
       setStats({ total: 0, volume: 0, success: 0 });
     }
-  }, [user, demoMode]); // Dependency on user and demoMode
+  }, [user]);
 
   const checkAuth = async () => {
     try {
@@ -57,7 +56,6 @@ function AppContent() {
       setUser(null);
       setRecentPayments([]);
       setStats({ total: 0, volume: 0, success: 0 });
-      setDemoMode(false); // Turn off demo mode on logout
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -65,7 +63,7 @@ function AppContent() {
 
   const loadRecentPayments = async () => {
     try {
-      const payments = await fetchRecentPayments(20, demoMode); // Pass demoMode
+      const payments = await fetchRecentPayments(20);
       setRecentPayments(payments);
       
       // Calculate stats
@@ -180,21 +178,6 @@ function AppContent() {
                 </motion.button>
               </div>
               
-              {/* Demo Mode Toggle */}
-              <motion.button
-                onClick={() => setDemoMode(!demoMode)}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`px-4 py-2 rounded-lg font-medium transition border ${
-                  demoMode
-                    ? 'bg-white text-black border-white'
-                    : 'bg-transparent text-white border-white/30 hover:border-white/50'
-                }`}
-                title={demoMode ? 'Demo mode active - viewing sample transactions' : 'Toggle demo mode to view sample transactions'}
-              >
-                {demoMode ? '🎭 Demo Mode ON' : '🎭 Demo Mode'}
-              </motion.button>
-              
               {/* User Menu */}
               <div className="flex items-center space-x-3 ml-auto">
                 {/* User Avatar/Icon - Always show an icon */}
@@ -202,17 +185,24 @@ function AppContent() {
                   whileHover={{ scale: 1.1 }}
                   className="relative"
                 >
-                  {user.picture ? (
+                  {user.picture && user.picture.trim() !== '' ? (
                     <img
                       src={user.picture}
                       alt={user.name || 'User'}
                       className="w-10 h-10 rounded-full border-2 border-white object-cover"
+                      onError={(e) => {
+                        // If image fails to load, hide image and show fallback
+                        e.target.style.display = 'none';
+                        const fallback = e.target.parentElement.querySelector('.avatar-fallback');
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
                     />
-                  ) : (
-                    <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-black font-bold text-lg border-2 border-white shadow-md">
-                      {user.name ? user.name.charAt(0).toUpperCase() : user.email ? user.email.charAt(0).toUpperCase() : '👤'}
-                    </div>
-                  )}
+                  ) : null}
+                  <div 
+                    className={`avatar-fallback w-10 h-10 rounded-full bg-white flex items-center justify-center text-black font-bold text-lg border-2 border-white shadow-md ${user.picture && user.picture.trim() !== '' ? 'hidden' : ''}`}
+                  >
+                    {user.name ? user.name.charAt(0).toUpperCase() : user.email ? user.email.charAt(0).toUpperCase() : '👤'}
+                  </div>
                 </motion.div>
                 <div className="text-right">
                   <p className="text-sm font-medium text-white">{user.name || 'User'}</p>
@@ -300,7 +290,7 @@ function AppContent() {
               exit={{ opacity: 0, x: 20 }}
               transition={{ duration: 0.3 }}
             >
-              <PaymentForm onPaymentCreated={loadRecentPayments} demoMode={demoMode} />
+              <PaymentForm onPaymentCreated={loadRecentPayments} />
             </motion.div>
           ) : (
             <motion.div
@@ -331,8 +321,9 @@ function AppContent() {
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<LiveDemo />} />
+      <Route path="/app" element={<AppContent />} />
       <Route path="/demo" element={<LiveDemo />} />
-      <Route path="/*" element={<AppContent />} />
     </Routes>
   );
 }

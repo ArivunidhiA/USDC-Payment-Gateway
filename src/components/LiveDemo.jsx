@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { WaveBackground } from './ui/WaveBackground';
 
 const DEMO_STAGES = [
   {
@@ -124,23 +125,33 @@ function LiveDemo() {
   const completedStages = DEMO_STAGES.filter((_, index) => index <= currentStage && DEMO_STAGES[index].status === 'completed');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-black text-white relative">
+      {/* Wave Background with 50% opacity */}
+      <WaveBackground 
+        strokeColor="#ffffff"
+        backgroundColor="#000000"
+        opacity={0.5}
+        className="fixed inset-0"
+      />
+      
+      {/* Content with higher z-index */}
+      <div className="relative z-10">
       {/* Header */}
       <motion.nav 
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="bg-white shadow-sm"
+        className="bg-black/80 backdrop-blur-sm border-b border-white/20 shadow-lg"
       >
         <div className="max-w-7xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <motion.button
-              onClick={() => window.location.href = '/'}
+              onClick={() => navigate('/app')}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="flex items-center space-x-2 text-gray-700 hover:text-indigo-600"
+              className="flex items-center space-x-2 text-white/80 hover:text-white transition"
             >
               <span>←</span>
-              <span>Back to App</span>
+              <span>Go to App</span>
             </motion.button>
             <motion.div
               className="flex items-center space-x-4"
@@ -148,12 +159,12 @@ function LiveDemo() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
-              <span className="text-sm text-gray-600">🎬 Live Demo</span>
+              <span className="text-sm text-white/70">🎬 Live Demo</span>
               <motion.button
                 onClick={() => setIsRunning(!isRunning)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium"
+                className="px-4 py-2 bg-white text-black rounded-lg text-sm font-medium hover:bg-white/90"
               >
                 {isRunning ? '⏸ Pause' : '▶ Resume'}
               </motion.button>
@@ -161,7 +172,7 @@ function LiveDemo() {
                 onClick={handleRestart}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium"
+                className="px-4 py-2 bg-transparent text-white border border-white/30 hover:border-white/50 rounded-lg text-sm font-medium"
               >
                 🔄 Restart
               </motion.button>
@@ -177,13 +188,13 @@ function LiveDemo() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-bold text-white mb-2">
             🎬 Live Demo: Cross-Chain Transfer
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-white/70">
             Auto-playing demonstration • No wallet needed
           </p>
-          <p className="text-sm text-gray-500 mt-2">
+          <p className="text-sm text-white/50 mt-2">
             Simulating $150 USDC transfer from Ethereum Sepolia → Base Sepolia
           </p>
         </motion.div>
@@ -193,20 +204,20 @@ function LiveDemo() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="bg-white rounded-lg shadow-lg p-6 border-2 border-indigo-200"
+            className="bg-black/60 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg p-6"
           >
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Payment Request</h3>
+            <h3 className="text-lg font-bold text-white mb-4">Payment Request</h3>
             <div className="space-y-3">
               <div>
-                <p className="text-3xl font-bold text-indigo-600">$150</p>
-                <p className="text-sm text-gray-600">USDC</p>
+                <p className="text-3xl font-bold text-white">$150</p>
+                <p className="text-sm text-white/70">USDC</p>
               </div>
               <div className="flex items-center space-x-2">
-                <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                <span className="px-3 py-1 bg-white/20 text-white rounded-full text-sm font-medium border border-white/30">
                   ETH Sepolia
                 </span>
-                <span className="text-gray-400">→</span>
-                <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
+                <span className="text-white/50">→</span>
+                <span className="px-3 py-1 bg-white/20 text-white rounded-full text-sm font-medium border border-white/30">
                   Base Sepolia
                 </span>
               </div>
@@ -218,25 +229,25 @@ function LiveDemo() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-lg shadow-lg p-6 border-2 border-purple-200"
+            className="bg-black/60 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg p-6"
           >
-            <h3 className="text-lg font-bold text-gray-900 mb-4">CCTP Processing</h3>
+            <h3 className="text-lg font-bold text-white mb-4">CCTP Processing</h3>
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-600">{currentStageData.title}</span>
-                  <span className="text-gray-500">{currentStageData.progress || 0}%</span>
+                  <span className="text-white/80">{currentStageData.title}</span>
+                  <span className="text-white/50">{currentStageData.progress || 0}%</span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3">
+                <div className="w-full bg-white/20 rounded-full h-3">
                   <motion.div
-                    className="bg-gradient-to-r from-indigo-500 to-purple-600 h-3 rounded-full"
+                    className="bg-white h-3 rounded-full"
                     initial={{ width: 0 }}
                     animate={{ width: `${currentStageData.progress || (currentStage / DEMO_STAGES.length) * 100}%` }}
                     transition={{ duration: 0.5 }}
                   />
                 </div>
               </div>
-              <p className="text-sm text-gray-600">{currentStageData.description}</p>
+              <p className="text-sm text-white/70">{currentStageData.description}</p>
             </div>
           </motion.div>
 
@@ -245,9 +256,9 @@ function LiveDemo() {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-lg shadow-lg p-6"
+            className="bg-black/60 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg p-6"
           >
-            <h3 className="text-lg font-bold text-gray-900 mb-4">Status Timeline</h3>
+            <h3 className="text-lg font-bold text-white mb-4">Status Timeline</h3>
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {DEMO_STAGES.map((stage, index) => {
                 const isActive = index === currentStage;
@@ -261,38 +272,38 @@ function LiveDemo() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                     className={`border-l-4 pl-4 pb-4 ${
-                      isCompleted ? 'border-green-500' : isActive ? 'border-yellow-500' : 'border-gray-300'
+                      isCompleted ? 'border-white' : isActive ? 'border-white/50' : 'border-white/20'
                     }`}
                   >
                     <div className="flex items-start space-x-2">
                       <span className="text-xl">{stage.icon}</span>
                       <div className="flex-1">
-                        <p className={`font-medium ${isCompleted ? 'text-green-700' : isActive ? 'text-yellow-700' : 'text-gray-500'}`}>
+                        <p className={`font-medium ${isCompleted ? 'text-white' : isActive ? 'text-white/80' : 'text-white/50'}`}>
                           {stage.title}
                         </p>
-                        <p className="text-xs text-gray-600 mt-1">{stage.description}</p>
+                        <p className="text-xs text-white/70 mt-1">{stage.description}</p>
                         {stage.txHash && (
                           <motion.a
                             href={stage.explorerUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-indigo-600 hover:underline mt-1 inline-block"
+                            className="text-xs text-white/80 hover:text-white underline mt-1 inline-block"
                             whileHover={{ scale: 1.05 }}
                           >
                             View on {stage.explorerUrl?.includes('etherscan') ? 'Etherscan' : 'BaseScan'} →
                           </motion.a>
                         )}
                         {stage.messageHash && (
-                          <p className="text-xs text-gray-500 mt-1 font-mono">
+                          <p className="text-xs text-white/50 mt-1 font-mono">
                             Hash: {stage.messageHash.slice(0, 10)}...{stage.messageHash.slice(-8)}
                           </p>
                         )}
                         {stage.estimatedTime && (
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-white/50 mt-1">
                             Estimated: {stage.estimatedTime}
                           </p>
                         )}
-                        <p className="text-xs text-gray-400 mt-1">{stage.time}s</p>
+                        <p className="text-xs text-white/40 mt-1">{stage.time}s</p>
                       </div>
                     </div>
                   </motion.div>
@@ -307,9 +318,9 @@ function LiveDemo() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="bg-white rounded-lg shadow-lg p-6"
+          className="bg-black/60 backdrop-blur-sm border border-white/20 rounded-lg shadow-lg p-6"
         >
-          <h3 className="text-xl font-bold text-gray-900 mb-4">Recent Demo Transactions</h3>
+          <h3 className="text-xl font-bold text-white mb-4">Recent Demo Transactions</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             {MOCK_TRANSACTIONS.map((tx, index) => (
               <motion.div
@@ -318,13 +329,13 @@ function LiveDemo() {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 + index * 0.1 }}
                 whileHover={{ scale: 1.05, y: -5 }}
-                className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg p-4 border border-indigo-200"
+                className="bg-black/40 backdrop-blur-sm border border-white/20 rounded-lg p-4"
               >
-                <p className="text-lg font-bold text-indigo-600">${tx.amount}</p>
-                <p className="text-sm text-gray-600 mt-1">{tx.source} → {tx.dest}</p>
+                <p className="text-lg font-bold text-white">${tx.amount}</p>
+                <p className="text-sm text-white/70 mt-1">{tx.source} → {tx.dest}</p>
                 <div className="flex items-center space-x-2 mt-2">
-                  <span className="text-green-500">✅</span>
-                  <span className="text-xs text-gray-500">{tx.time}</span>
+                  <span className="text-white">✅</span>
+                  <span className="text-xs text-white/50">{tx.time}</span>
                 </div>
               </motion.div>
             ))}
@@ -336,14 +347,15 @@ function LiveDemo() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
-          className="mt-6 bg-indigo-50 border border-indigo-200 rounded-lg p-4"
+          className="mt-6 bg-black/40 backdrop-blur-sm border border-white/20 rounded-lg p-4"
         >
-          <p className="text-sm text-indigo-800">
+          <p className="text-sm text-white/80">
             <strong>💡 Note:</strong> This is an automated demonstration showing the CCTP (Cross-Chain Transfer Protocol) flow. 
             In production, each stage requires blockchain confirmations and Circle API attestation verification. 
             Actual transaction times may vary based on network conditions.
           </p>
         </motion.div>
+      </div>
       </div>
     </div>
   );

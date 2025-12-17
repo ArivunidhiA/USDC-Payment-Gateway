@@ -22,7 +22,7 @@ const DOMAIN_IDS = {
   arbitrum_sepolia: 3
 };
 
-function PaymentForm({ onPaymentCreated, demoMode = false }) {
+function PaymentForm({ onPaymentCreated }) {
   const [formData, setFormData] = useState({
     amount: '',
     sourceChain: 'sepolia',
@@ -191,54 +191,35 @@ function PaymentForm({ onPaymentCreated, demoMode = false }) {
         Create Cross-Chain Payment
       </motion.h2>
 
-      {/* Demo Mode Banner */}
-      <AnimatePresence>
-        {demoMode && (
-          <motion.div
+      {/* Wallet Connection */}
+      <AnimatePresence mode="wait">
+        {!walletConnected ? (
+          <motion.button
+            key="connect"
+            onClick={connectWallet}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
+            className="w-full bg-white text-black py-3 rounded-lg font-medium hover:bg-white/90 transition mb-6 border border-white/20"
+          >
+            Connect Wallet
+          </motion.button>
+        ) : (
+          <motion.div 
+            key="connected"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
             className="mb-6 p-4 bg-white/10 border border-white/30 rounded-lg"
           >
             <p className="text-sm text-white/90">
-              🎭 <strong>Demo Mode:</strong> You're viewing sample transactions. 
-              Toggle off "Demo Mode" to create real payments with your wallet.
+              Connected: {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
             </p>
           </motion.div>
         )}
       </AnimatePresence>
-
-      {/* Wallet Connection */}
-      {!demoMode && (
-        <AnimatePresence mode="wait">
-          {!walletConnected ? (
-            <motion.button
-              key="connect"
-              onClick={connectWallet}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              className="w-full bg-white text-black py-3 rounded-lg font-medium hover:bg-white/90 transition mb-6 border border-white/20"
-            >
-              Connect Wallet
-            </motion.button>
-          ) : (
-            <motion.div 
-              key="connected"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="mb-6 p-4 bg-white/10 border border-white/30 rounded-lg"
-            >
-              <p className="text-sm text-white/90">
-                Connected: {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      )}
 
       {/* Payment Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -296,16 +277,12 @@ function PaymentForm({ onPaymentCreated, demoMode = false }) {
         {/* Submit Button */}
         <motion.button
           type="submit"
-          disabled={processing || (!walletConnected && !demoMode)}
-          whileHover={!processing && (walletConnected || demoMode) ? { scale: 1.02 } : {}}
-          whileTap={!processing && (walletConnected || demoMode) ? { scale: 0.98 } : {}}
+          disabled={processing || !walletConnected}
+          whileHover={!processing && walletConnected ? { scale: 1.02 } : {}}
+          whileTap={!processing && walletConnected ? { scale: 0.98 } : {}}
           className="w-full bg-white text-black py-3 rounded-lg font-medium hover:bg-white/90 disabled:bg-white/20 disabled:cursor-not-allowed transition border border-white/20"
         >
-          {demoMode ? (
-            <span className="flex items-center justify-center">
-              🎭 Demo Mode - Connect Wallet to Create Real Payment
-            </span>
-          ) : processing ? (
+          {processing ? (
             <span className="flex items-center justify-center">
               <motion.span
                 animate={{ rotate: 360 }}
