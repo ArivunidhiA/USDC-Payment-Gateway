@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+payments.db
+
+# Session files
+flask_session/
+*.session
+
+# Environment & Secrets
+.env
+.env.local
+.env.*
+*.env
+env.local
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+.netlify/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
