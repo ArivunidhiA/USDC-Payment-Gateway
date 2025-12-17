@@ -10,7 +10,6 @@
 
 [functions]
   directory = "netlify/functions"
-  node_bundler = "esbuild"
   included_files = ["api/**"]
 
 # Redirect API routes to Netlify functions
